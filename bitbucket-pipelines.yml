@@ -10,25 +10,6 @@ image: node:16
 pipelines:
   default:
     - parallel:
-      - step:
-          name: Build and Test
-          caches:
-            - node
-          script:
-            - npm install
-            # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
-            - npm test
-      - step:
-          name: Lint the node package
-          script:
-            # Run your linter of choice here
-            - npm install eslint
-            - npx eslint src
-          caches:
-            - node
-  branches:
-    master:
-      - parallel:
         - step:
             name: Build and Test
             caches:
@@ -37,15 +18,34 @@ pipelines:
               - npm install
               # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
               - npm test
-              - npm run build
-            artifacts:
-              - build/**
         - step:
-            name: Security Scan
+            name: Lint the node package
             script:
-              # Run a security scan for sensitive data.
-              # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
-              - pipe: atlassian/git-secrets-scan:0.5.1
+              # Run your linter of choice here
+              - npm install eslint
+              - npx eslint src
+            caches:
+              - node
+  branches:
+    master:
+      - parallel:
+          - step:
+              name: Build and Test
+              caches:
+                - node
+              script:
+                - npm install
+                # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
+                - npm test
+                - npm run build
+              artifacts:
+                - dist/**
+          - step:
+              name: Security Scan
+              script:
+                # Run a security scan for sensitive data.
+                # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+                - pipe: atlassian/git-secrets-scan:0.5.1
       - step:
           name: Deploy to Production
           deployment: Production
@@ -59,6 +59,5 @@ pipelines:
                 AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
-                S3_BUCKET: '104-f2e-group-homework'
-                LOCAL_PATH: 'build'
-
+                S3_BUCKET: "104-f2e-group-homework"
+                LOCAL_PATH: "dist"

@@ -41,11 +41,23 @@ pipelines:
               artifacts:
                 - dist/**
           - step:
+              name: Tagging version
+              script: git tag -a release-${BITBUCKET_BUILD_NUMBER} -m "Tagging for release ${BITBUCKET_BUILD_NUMBER}"
+          - step:
               name: Security Scan
               script:
                 # Run a security scan for sensitive data.
                 # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
                 - pipe: atlassian/git-secrets-scan:0.5.1
+          - step:
+              name: Security Scan
+              script:
+                - zip homework.zip dist/**
+                - pipe: atlassian/bitbucket-upload-file:0.1.2
+                  variables:
+                    BITBUCKET_USERNAME: $BITBUCKET_USERNAME
+                    BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
+                    FILENAME: "homework.zip"
       - step:
           name: Deploy to Production
           deployment: Production

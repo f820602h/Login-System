@@ -49,23 +49,24 @@ pipelines:
       - step:
           name: Tagging version
           script: 
-            - git tag -a release-${BITBUCKET_BUILD_NUMBER} -m "Tagging for release ${BITBUCKET_BUILD_NUMBER}"            
+            - git tag -a release-${BITBUCKET_BUILD_NUMBER} -m "Tagging for release ${BITBUCKET_BUILD_NUMBER}"
+            - git push origin --tags           
       - step:
           name: Deploy to Production
           deployment: Production
-          trigger: manual
+          trigger: automatic
           clone:
             enabled: false
           script:
             # upload to bitbucket download
             - apt-get update
             - apt-get install zip 
-            - zip homework.zip dist/**
+            - zip homework-${BITBUCKET_BUILD_NUMBER}.zip dist/**
             - pipe: atlassian/bitbucket-upload-file:0.1.2
               variables:
                 BITBUCKET_USERNAME: $BITBUCKET_USERNAME
                 BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
-                FILENAME: "homework.zip"
+                FILENAME: "homework-${BITBUCKET_BUILD_NUMBER}.zip"
             # sync your files to S3
             - pipe: atlassian/aws-s3-deploy:1.1.0
               variables:

@@ -42,7 +42,8 @@ pipelines:
                 - dist/**
           - step:
               name: Tagging version
-              script: git tag -a release-${BITBUCKET_BUILD_NUMBER} -m "Tagging for release ${BITBUCKET_BUILD_NUMBER}"
+              script: 
+                - git tag -a release-${BITBUCKET_BUILD_NUMBER} -m "Tagging for release ${BITBUCKET_BUILD_NUMBER}"
           - step:
               name: Security Scan
               script:

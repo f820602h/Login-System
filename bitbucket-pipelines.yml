@@ -67,6 +67,13 @@ pipelines:
                 BITBUCKET_USERNAME: $BITBUCKET_USERNAME
                 BITBUCKET_APP_PASSWORD: $BITBUCKET_APP_PASSWORD
                 FILENAME: "homework-${BITBUCKET_BUILD_NUMBER}.zip"
+            - pipe: atlassian/ftp-deploy:0.3.7
+              variables:
+                USER: $FTP_SERVER_USER
+                PASSWORD: $FTP_SERVER_PASSWORD
+                SERVER: "104.199.145.44"
+                REMOTE_PATH: '/'
+                LOCAL_PATH: "dist"
             # sync your files to S3
             - pipe: atlassian/aws-s3-deploy:1.1.0
               variables:
@@ -74,11 +81,4 @@ pipelines:
                 AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                 AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
                 S3_BUCKET: "104-f2e-group-homework"
-                LOCAL_PATH: "dist"
-            - pipe: atlassian/ftp-deploy:0.3.7
-              variables:
-                USER: $FTP_SERVER_USER
-                PASSWORD: $FTP_SERVER_PASSWORD
-                SERVER: "104.199.145.44"
-                REMOTE_PATH: '/'
                 LOCAL_PATH: "dist"

@@ -74,6 +74,7 @@ pipelines:
                 SERVER: "104.199.145.44"
                 REMOTE_PATH: '/'
                 LOCAL_PATH: "dist"
+                DEBUG: "true"
             # sync your files to S3
             - pipe: atlassian/aws-s3-deploy:1.1.0
               variables:
